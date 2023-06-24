@@ -1,0 +1,70 @@
+#include <stdio.h>
+
+#define MAX_STATES 10
+
+int transitionTable[MAX_STATES][2][2];  // Transition table for NFA
+
+// Function to initialize the transition table
+void initializeTransitionTable() {
+    // State 0: Initial state
+    transitionTable[0][0][0] = 0;  // If input is '0', remain in state 0
+    transitionTable[0][1][0] = -1; // If input is '1', no transition
+    transitionTable[0][0][1] = 1;  // If input is 'o', transition to state 1
+    transitionTable[0][1][1] = -1; // If input is '1', no transition
+    
+    // State 1: Intermediate state
+    transitionTable[1][0][0] = 1;  // If input is '0', remain in state 1
+    transitionTable[1][1][0] = 1;  // If input is '1', remain in state 1
+    transitionTable[1][0][1] = 2;  // If input is 'o', transition to state 2
+    transitionTable[1][1][1] = -1; // If input is '1', no transition
+    
+    // State 2: Accepting state
+    transitionTable[2][0][0] = -1; // If input is '0', no transition
+    transitionTable[2][1][0] = -1; // If input is '1', no transition
+    transitionTable[2][0][1] = -1; // If input is 'o', no transition
+    transitionTable[2][1][1] = -1; // If input is '1', no transition
+}
+
+// Function to simulate the NFA
+int simulateNFA(char* str) {
+    int currentState = 0;
+    int i = 0;
+    
+    while (str[i] != '\0') {
+        char input = str[i];
+        
+        if (input != '0' && input != '1') {
+            // Invalid input character
+            return 0;
+        }
+        
+        int nextState = transitionTable[currentState][input - '0'][input - '0'];
+        
+        if (nextState == -1) {
+            // No valid transition for the input character
+            return 0;
+        }
+        
+        currentState = nextState;
+        i++;
+    }
+    
+    return currentState == 2;  // Return 1 if the final state is the accepting state (state 2)
+}
+
+int main() {
+    initializeTransitionTable();
+    
+    char str[100];
+    
+    printf("Enter a string: ");
+    scanf("%s", str);
+    
+    if (simulateNFA(str)) {
+        printf("Accepted\n");
+    } else {
+        printf("Not Accepted\n");
+    }
+    
+    return 0;
+}
