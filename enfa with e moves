@@ -1,0 +1,59 @@
+#include <stdio.h>
+
+#define MAX_STATES 10
+#define MAX_TRANSITIONS 10
+
+int transitionTable[MAX_STATES][MAX_TRANSITIONS][MAX_STATES];  // Transition table for NFA
+
+// Function to initialize the transition table
+void initializeTransitionTable() {
+    // State 0: Initial state
+    transitionTable[0][0][0] = 1;  // If input is 'ε', transition to state 1
+    transitionTable[0][0][1] = 2;  // If input is 'ε', transition to state 2
+    transitionTable[0][1][0] = -1; // No transition for input 'a'
+    transitionTable[0][1][1] = -1; // No transition for input 'a'
+    
+    // State 1
+    transitionTable[1][0][0] = -1; // No transition for input 'ε'
+    transitionTable[1][1][0] = 3;  // If input is 'b', transition to state 3
+    
+    // State 2
+    transitionTable[2][0][0] = 4;  // If input is 'ε', transition to state 4
+    transitionTable[2][0][1] = -1; // No transition for input 'ε'
+    transitionTable[2][1][0] = 5;  // If input is 'c', transition to state 5
+    
+    // State 3
+    transitionTable[3][0][0] = -1; // No transition for input 'ε'
+    transitionTable[3][1][0] = -1; // No transition for input 'ε'
+    
+    // State 4
+    transitionTable[4][0][0] = -1; // No transition for input 'ε'
+    transitionTable[4][0][1] = -1; // No transition for input 'ε'
+    transitionTable[4][1][0] = -1; // No transition for input 'ε'
+    transitionTable[4][1][1] = -1; // No transition for input 'ε'
+    
+    // State 5
+    transitionTable[5][0][0] = -1; // No transition for input 'ε'
+    transitionTable[5][0][1] = -1; // No transition for input 'ε'
+    transitionTable[5][1][0] = -1; // No transition for input 'ε'
+    transitionTable[5][1][1] = -1; // No transition for input 'ε'
+}
+
+// Function to find ε-closure for a state
+void findEpsilonClosure(int state, int nStates, int visited[]) {
+    visited[state] = 1;  // Mark the state as visited
+    
+    for (int i = 0; i < nStates; i++) {
+        if (transitionTable[state][0][i] != -1 && visited[i] == 0) {
+            // If there is an ε-transition to a state and it is not visited, explore it recursively
+            findEpsilonClosure(i, nStates, visited);
+        }
+    }
+}
+
+// Function to find ε-closure for all states
+void findEpsilonClosureForAllStates(int nStates) {
+    int visited[MAX_STATES] = {0};  // Array to keep track of visited states
+    
+    for (int i = 0; i < nStates; i++) {
+        // Reset
